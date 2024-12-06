@@ -13,6 +13,17 @@ commands:
           at: ~/react-native-paper
 
 jobs:
+  update-yarn: 
+    executor: default
+    steps:
+      - checkout
+      - attach_project
+      - run:
+          name: "Enable Corepack and upgrade Yarn"
+          command: |
+            sudo corepack enable
+            yarn set version berry
+            yarn
   install-dependencies:
     executor: default
     steps:
@@ -127,7 +138,10 @@ jobs:
 workflows:
   build-and-test:
     jobs:
-      - install-dependencies
+      - update-yarn
+      - install-dependencies:
+          requires:
+            - update-yarn
       - lint:
           requires:
             - install-dependencies
